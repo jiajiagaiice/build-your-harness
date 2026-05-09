@@ -16,6 +16,7 @@ export const SkillNodeSchema = z.object({
   label: z.string().min(1),
   skillRef: z.string().optional(),
   description: z.string().optional(),
+  skillContent: z.string().optional(),
   inputs: z.record(z.string(), z.unknown()).optional(),
   outputs: z.record(z.string(), z.unknown()).optional(),
 });

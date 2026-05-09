@@ -23,6 +23,7 @@ A Build Your Harness workflow is a directed acyclic graph of skill-oriented node
 | `label` | string | yes | Display name in the visual canvas. |
 | `skillRef` | string | no | Path or registry reference for a `SKILL.md` file. |
 | `description` | string | no | Node-level guidance shown in the canvas and export. |
+| `skillContent` | string | no | Editable SKILL.md content authored in the visual editor and exported as a generated skill artifact. |
 | `inputs` | object | no | Optional parameter metadata. |
 | `outputs` | object | no | Optional output metadata. |
 

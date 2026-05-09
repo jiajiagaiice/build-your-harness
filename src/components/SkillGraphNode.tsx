@@ -10,6 +10,7 @@ export function SkillGraphNode({ data, selected }: NodeProps) {
       <div className="skill-node__type">{node.type}</div>
       <div className="skill-node__label">{node.label}</div>
       {node.description ? <p>{node.description}</p> : null}
+      {node.skillContent ? <div className="skill-node__content-badge">SKILL.md</div> : null}
       <Handle type="source" position={Position.Right} />
     </div>
   );

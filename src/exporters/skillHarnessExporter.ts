@@ -13,6 +13,7 @@ export type HarnessExportResult = {
     entryNodeId: string;
     executionOrder: string[];
     skills: string[];
+    generatedSkills: string[];
   };
   artifacts: HarnessExportArtifact[];
 };
@@ -25,6 +26,12 @@ export function exportSkillHarness(workflow: HarnessWorkflow): HarnessExportResu
 
   const orderedNodes = topologicallySortWorkflow(workflow);
   const skills = workflow.nodes.flatMap((node) => (node.skillRef ? [node.skillRef] : []));
+  const generatedSkillArtifacts = workflow.nodes
+    .filter((node) => node.skillContent?.trim())
+    .map((node) => ({
+      path: node.skillRef || `skills/generated/${node.id}/SKILL.md`,
+      content: `${node.skillContent?.trimEnd()}\n`,
+    }));
   const manifest = {
     id: workflow.id,
     name: workflow.name,
@@ -32,6 +39,7 @@ export function exportSkillHarness(workflow: HarnessWorkflow): HarnessExportResu
     entryNodeId: workflow.entryNodeId,
     executionOrder: orderedNodes.map((node) => node.id),
     skills,
+    generatedSkills: generatedSkillArtifacts.map((artifact) => artifact.path),
   };
 
   return {
@@ -49,6 +57,7 @@ export function exportSkillHarness(workflow: HarnessWorkflow): HarnessExportResu
         path: 'HARNESS.md',
         content: renderHarnessInstructions(workflow, orderedNodes),
       },
+      ...generatedSkillArtifacts,
     ],
   };
 }

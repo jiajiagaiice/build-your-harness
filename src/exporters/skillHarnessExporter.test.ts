@@ -9,7 +9,13 @@ const workflow: HarnessWorkflow = {
   entryNodeId: 'start',
   nodes: [
     { id: 'start', type: 'skill', label: 'Start', skillRef: 'skills/start/SKILL.md' },
-    { id: 'finish', type: 'verification', label: 'Finish', skillRef: 'skills/finish/SKILL.md' },
+    {
+      id: 'finish',
+      type: 'verification',
+      label: 'Finish',
+      skillRef: 'skills/finish/SKILL.md',
+      skillContent: '# Finish\n\nVerify the work.\n',
+    },
   ],
   edges: [{ id: 'start-finish', source: 'start', target: 'finish' }],
 };
@@ -23,7 +29,10 @@ describe('exportSkillHarness', () => {
       'workflow.json',
       'manifest.json',
       'HARNESS.md',
+      'skills/finish/SKILL.md',
     ]);
+    expect(result.manifest.generatedSkills).toEqual(['skills/finish/SKILL.md']);
     expect(result.artifacts[2].content).toContain('## Execution order');
+    expect(result.artifacts[3].content).toBe('# Finish\n\nVerify the work.\n');
   });
 });

@@ -7,7 +7,7 @@ const validWorkflow: HarnessWorkflow = {
   version: '0.1.0',
   entryNodeId: 'plan',
   nodes: [
-    { id: 'plan', type: 'skill', label: 'Plan' },
+    { id: 'plan', type: 'skill', label: 'Plan', skillContent: '# Plan\n' },
     { id: 'build', type: 'skill', label: 'Build' },
     { id: 'verify', type: 'verification', label: 'Verify' },
   ],
