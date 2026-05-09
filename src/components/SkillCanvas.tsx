@@ -14,6 +14,7 @@ import {
   useNodesState,
 } from '@xyflow/react';
 import { useCallback, useEffect, useMemo } from 'react';
+import { useI18n } from '../i18n';
 import { SkillNode } from '../schema/workflow';
 import { useWorkflowStore } from '../store/workflowStore';
 import { SkillGraphNode } from './SkillGraphNode';
@@ -28,6 +29,7 @@ const defaultEdgeOptions = {
 };
 
 export function SkillCanvas() {
+  const { t } = useI18n();
   const { workflow, setNodes: setWorkflowNodes, setEdges: setWorkflowEdges, selectNode } = useWorkflowStore();
 
   const initialNodes = useMemo(() => toReactFlowNodes(workflow.nodes), [workflow.nodes]);
@@ -73,24 +75,27 @@ export function SkillCanvas() {
   );
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      defaultEdgeOptions={defaultEdgeOptions}
-      fitView
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onNodeClick={(_, node) => selectNode(node.id)}
-      onPaneClick={() => selectNode(undefined)}
-      onNodesDelete={onNodesDelete}
-      onEdgesDelete={onEdgesDelete}
-    >
-      <Background />
-      <MiniMap zoomable pannable />
-      <Controls />
-    </ReactFlow>
+    <>
+      <div className="canvas-hint">{t('canvas.editHint')}</div>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        fitView
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={(_, node) => selectNode(node.id)}
+        onPaneClick={() => selectNode(undefined)}
+        onNodesDelete={onNodesDelete}
+        onEdgesDelete={onEdgesDelete}
+      >
+        <Background />
+        <MiniMap zoomable pannable />
+        <Controls />
+      </ReactFlow>
+    </>
   );
 }
 

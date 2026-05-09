@@ -18,6 +18,8 @@ Harness engineering treats the agent's environment as a product surface: prompts
 
 - React + TypeScript + Vite application shell.
 - React Flow canvas for arranging skill nodes and directed edges.
+- Chinese/English UI toggle for authoring workflows bilingually.
+- Editable visual skill nodes with SKILL.md content fields and an AI-helper prompt/draft generator.
 - Workflow schema and DAG validation with Zod.
 - Local skill registry seeded with a Superpowers-inspired development workflow.
 - Exporter that converts a workflow into agent-facing harness artifacts.
