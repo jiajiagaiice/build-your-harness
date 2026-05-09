@@ -1,0 +1,229 @@
+:root {
+  color: #172033;
+  background: #eef2f8;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 28px;
+  background: linear-gradient(135deg, #0f1b33, #264276);
+  color: white;
+  box-shadow: 0 10px 30px rgb(23 32 51 / 20%);
+}
+
+.toolbar h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+}
+
+.toolbar p {
+  margin: 0;
+  color: #cbd7ef;
+}
+
+.toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.toolbar button,
+.palette button {
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.toolbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: #172033;
+  font-weight: 700;
+}
+
+.toolbar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  border-radius: 999px;
+  padding: 8px 12px;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.status--ok {
+  background: rgb(34 197 94 / 18%);
+  color: #dcfce7;
+}
+
+.status--error {
+  background: rgb(248 113 113 / 20%);
+  color: #fee2e2;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) 320px;
+  gap: 18px;
+  padding: 18px;
+  min-height: calc(100vh - 96px);
+}
+
+.panel,
+.canvas-shell {
+  background: rgb(255 255 255 / 92%);
+  border: 1px solid #dbe4f3;
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgb(23 32 51 / 10%);
+}
+
+.panel {
+  padding: 18px;
+  overflow: auto;
+}
+
+.panel h2 {
+  margin: 0 0 14px;
+  font-size: 17px;
+}
+
+.palette input,
+.inspector input,
+.inspector select,
+.inspector textarea {
+  width: 100%;
+  border: 1px solid #c8d4e7;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: white;
+  color: #172033;
+}
+
+.palette__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.palette button {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  background: #f4f7fb;
+  color: #172033;
+  border: 1px solid #dbe4f3;
+}
+
+.palette button:hover {
+  background: #e8f0ff;
+}
+
+.palette span {
+  color: #5b6880;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.canvas-shell {
+  min-height: 680px;
+  overflow: hidden;
+}
+
+.skill-node {
+  width: 210px;
+  border-radius: 18px;
+  border: 2px solid #b7c7e3;
+  background: white;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgb(23 32 51 / 16%);
+}
+
+.skill-node--selected {
+  border-color: #4169e1;
+}
+
+.skill-node__type {
+  display: inline-flex;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  background: #e8f0ff;
+  color: #2e4fb0;
+  padding: 4px 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.skill-node__label {
+  font-size: 16px;
+  font-weight: 800;
+  color: #172033;
+}
+
+.skill-node p {
+  margin: 8px 0 0;
+  color: #5b6880;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.inspector label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+  color: #4a5568;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 1100px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .canvas-shell {
+    min-height: 560px;
+  }
+}

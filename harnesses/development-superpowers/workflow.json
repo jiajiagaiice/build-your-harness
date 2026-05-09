@@ -1,0 +1,66 @@
+{
+  "id": "development-superpowers",
+  "name": "Development Superpowers Harness",
+  "version": "0.1.0",
+  "description": "A Superpowers-inspired development harness for building this repository with explicit planning, implementation, test, review, and verification phases.",
+  "entryNodeId": "using-superpowers",
+  "nodes": [
+    {
+      "id": "using-superpowers",
+      "type": "skill",
+      "label": "Use Superpowers",
+      "skillRef": "skills/development-superpowers/using-superpowers/SKILL.md",
+      "description": "Start by identifying the workflow phase and loading only relevant skills."
+    },
+    {
+      "id": "brainstorming",
+      "type": "skill",
+      "label": "Brainstorming",
+      "skillRef": "skills/development-superpowers/brainstorming/SKILL.md",
+      "description": "Clarify the desired outcome, constraints, risks, and acceptance criteria."
+    },
+    {
+      "id": "writing-plans",
+      "type": "skill",
+      "label": "Writing Plans",
+      "skillRef": "skills/development-superpowers/writing-plans/SKILL.md",
+      "description": "Turn the selected approach into an executable plan."
+    },
+    {
+      "id": "executing-plans",
+      "type": "skill",
+      "label": "Executing Plans",
+      "skillRef": "skills/development-superpowers/executing-plans/SKILL.md",
+      "description": "Implement the plan incrementally and keep state visible."
+    },
+    {
+      "id": "test-driven-development",
+      "type": "verification",
+      "label": "Test Driven Development",
+      "skillRef": "skills/development-superpowers/test-driven-development/SKILL.md",
+      "description": "Use tests and programmatic checks to protect behavior."
+    },
+    {
+      "id": "requesting-code-review",
+      "type": "verification",
+      "label": "Requesting Code Review",
+      "skillRef": "skills/development-superpowers/requesting-code-review/SKILL.md",
+      "description": "Perform a structured review before handoff."
+    },
+    {
+      "id": "verification-before-completion",
+      "type": "verification",
+      "label": "Verification Before Completion",
+      "skillRef": "skills/development-superpowers/verification-before-completion/SKILL.md",
+      "description": "Summarize checks, known limitations, and completion status."
+    }
+  ],
+  "edges": [
+    { "id": "using-superpowers-brainstorming", "source": "using-superpowers", "target": "brainstorming" },
+    { "id": "brainstorming-writing-plans", "source": "brainstorming", "target": "writing-plans" },
+    { "id": "writing-plans-executing-plans", "source": "writing-plans", "target": "executing-plans" },
+    { "id": "executing-plans-test-driven-development", "source": "executing-plans", "target": "test-driven-development" },
+    { "id": "test-driven-development-requesting-code-review", "source": "test-driven-development", "target": "requesting-code-review" },
+    { "id": "requesting-code-review-verification-before-completion", "source": "requesting-code-review", "target": "verification-before-completion" }
+  ]
+}
