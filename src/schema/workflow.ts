@@ -10,16 +10,29 @@ export const SkillNodeTypeSchema = z.enum([
 
 export type SkillNodeType = z.infer<typeof SkillNodeTypeSchema>;
 
-export const SkillNodeSchema = z.object({
-  id: z.string().min(1),
-  type: SkillNodeTypeSchema.default('skill'),
-  label: z.string().min(1),
-  skillRef: z.string().optional(),
-  description: z.string().optional(),
-  skillContent: z.string().optional(),
-  inputs: z.record(z.string(), z.unknown()).optional(),
-  outputs: z.record(z.string(), z.unknown()).optional(),
-});
+export const SkillNodeSchema = z
+  .object({
+    id: z.string().min(1),
+    type: SkillNodeTypeSchema.default('skill'),
+    label: z.string().min(1),
+    skillRef: z.string().trim().min(1).optional(),
+    description: z.string().optional(),
+    skillContent: z.string().trim().min(1).optional(),
+    inputs: z.record(z.string(), z.unknown()).optional(),
+    outputs: z.record(z.string(), z.unknown()).optional(),
+  })
+  .superRefine((node, context) => {
+    const hasSkillRef = Boolean(node.skillRef);
+    const hasSkillContent = Boolean(node.skillContent);
+
+    if (hasSkillRef === hasSkillContent) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'provide exactly one of skillRef or skillContent',
+        path: ['skillRef'],
+      });
+    }
+  });
 
 export const SkillEdgeSchema = z.object({
   id: z.string().min(1),
