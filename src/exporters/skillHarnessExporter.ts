@@ -29,7 +29,7 @@ export function exportSkillHarness(workflow: HarnessWorkflow): HarnessExportResu
   const generatedSkillArtifacts = workflow.nodes
     .filter((node) => node.skillContent?.trim())
     .map((node) => ({
-      path: node.skillRef || `skills/generated/${node.id}/SKILL.md`,
+      path: getSkillPath(node),
       content: `${node.skillContent?.trimEnd()}\n`,
     }));
   const manifest = {
@@ -62,9 +62,13 @@ export function exportSkillHarness(workflow: HarnessWorkflow): HarnessExportResu
   };
 }
 
+function getSkillPath(node: HarnessWorkflow['nodes'][number]): string {
+  return node.skillRef || `skills/generated/${node.id}/SKILL.md`;
+}
+
 function renderHarnessInstructions(workflow: HarnessWorkflow, orderedNodes: HarnessWorkflow['nodes']): string {
   const steps = orderedNodes
-    .map((node, index) => `${index + 1}. **${node.label}** (${node.type})${node.skillRef ? ` — load \`${node.skillRef}\`` : ''}`)
+    .map((node, index) => `${index + 1}. **${node.label}** (${node.type}) — load \`${getSkillPath(node)}\``)
     .join('\n');
 
   return `# ${workflow.name}\n\nVersion: ${workflow.version}\n\n${workflow.description ?? 'Follow this harness workflow in order unless the user explicitly overrides it.'}\n\n## Execution order\n\n${steps}\n`;

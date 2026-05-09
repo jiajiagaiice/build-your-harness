@@ -22,8 +22,12 @@ type TranslationKey =
   | 'inspector.emptyTitle'
   | 'inspector.emptyBody'
   | 'inspector.label'
-  | 'inspector.type'
+  | 'inspector.skillSource'
+  | 'inspector.skillSourceHelp'
+  | 'inspector.skillRefMode'
+  | 'inspector.skillContentMode'
   | 'inspector.skillRef'
+  | 'inspector.skillRefPlaceholder'
   | 'inspector.description'
   | 'inspector.skillContent'
   | 'inspector.skillContentHelp'
@@ -53,16 +57,20 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
     'palette.title': 'Skill Palette',
     'palette.search': 'Search skills',
     'palette.addSkill': 'Add {name}',
-    'canvas.editHint': 'Click a node to edit its metadata and SKILL.md content.',
+    'canvas.editHint': 'Click a node to edit its metadata and skill source.',
     'inspector.title': 'Skill Editor',
     'inspector.emptyTitle': 'Skill Editor',
-    'inspector.emptyBody': 'Select a visual skill node to edit its label, type, reference, description, and SKILL.md content.',
+    'inspector.emptyBody': 'Select a visual skill node to edit its label, description, and skill source.',
     'inspector.label': 'Label',
-    'inspector.type': 'Type',
-    'inspector.skillRef': 'Skill reference',
+    'inspector.skillSource': 'Skill source',
+    'inspector.skillSourceHelp': 'Choose either a reference link or inline SKILL.md content. These two sources are mutually exclusive.',
+    'inspector.skillRefMode': 'Reference link',
+    'inspector.skillContentMode': 'Write SKILL.md here',
+    'inspector.skillRef': 'Skill reference link',
+    'inspector.skillRefPlaceholder': 'https://github.com/org/repo/tree/main/skills/some-skill',
     'inspector.description': 'Description',
     'inspector.skillContent': 'SKILL.md content',
-    'inspector.skillContentHelp': 'This editable content is exported as a generated SKILL.md artifact when present.',
+    'inspector.skillContentHelp': 'Inline content is exported as a generated SKILL.md artifact and clears the reference link.',
     'inspector.generateWithAi': 'Generate draft with AI helper',
     'inspector.aiPrompt': 'AI assistant prompt',
     'inspector.aiPromptHelp': 'Copy this prompt into your AI assistant, then paste the generated skill content back into the editor.',
@@ -82,16 +90,20 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
     'palette.title': 'Skill 面板',
     'palette.search': '搜索 skill',
     'palette.addSkill': '添加 {name}',
-    'canvas.editHint': '点击节点即可编辑元数据和 SKILL.md 内容。',
+    'canvas.editHint': '点击节点即可编辑元数据和 skill 来源。',
     'inspector.title': 'Skill 编辑器',
     'inspector.emptyTitle': 'Skill 编辑器',
-    'inspector.emptyBody': '请选择一个可视化 skill 节点，以编辑名称、类型、引用、描述和 SKILL.md 内容。',
+    'inspector.emptyBody': '请选择一个可视化 skill 节点，以编辑名称、描述和 skill 来源。',
     'inspector.label': '名称',
-    'inspector.type': '类型',
-    'inspector.skillRef': 'Skill 引用',
+    'inspector.skillSource': 'Skill 来源',
+    'inspector.skillSourceHelp': '选择一种来源：填写引用链接，或直接编写 SKILL.md 内容；两者互斥。',
+    'inspector.skillRefMode': '引用链接',
+    'inspector.skillContentMode': '直接编写 SKILL.md',
+    'inspector.skillRef': 'Skill 引用链接',
+    'inspector.skillRefPlaceholder': 'https://github.com/org/repo/tree/main/skills/some-skill',
     'inspector.description': '描述',
     'inspector.skillContent': 'SKILL.md 内容',
-    'inspector.skillContentHelp': '填写后，导出时会作为生成的 SKILL.md 产物一并输出。',
+    'inspector.skillContentHelp': '直接编写的内容会导出为生成的 SKILL.md 产物，并清空引用链接。',
     'inspector.generateWithAi': '用 AI 助手生成草稿',
     'inspector.aiPrompt': 'AI 助手提示词',
     'inspector.aiPromptHelp': '复制这段提示词到你的 AI 助手，再把生成的 skill 内容粘贴回编辑器。',

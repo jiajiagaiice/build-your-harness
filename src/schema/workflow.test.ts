@@ -8,8 +8,8 @@ const validWorkflow: HarnessWorkflow = {
   entryNodeId: 'plan',
   nodes: [
     { id: 'plan', type: 'skill', label: 'Plan', skillContent: '# Plan\n' },
-    { id: 'build', type: 'skill', label: 'Build' },
-    { id: 'verify', type: 'verification', label: 'Verify' },
+    { id: 'build', type: 'skill', label: 'Build', skillRef: 'skills/build/SKILL.md' },
+    { id: 'verify', type: 'verification', label: 'Verify', skillRef: 'skills/verify/SKILL.md' },
   ],
   edges: [
     { id: 'plan-build', source: 'plan', target: 'build' },
@@ -30,6 +30,30 @@ describe('workflow validation', () => {
 
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('workflow graph must be acyclic');
+  });
+
+  it('requires exactly one skill source per node', () => {
+    expect(
+      validateWorkflow({
+        ...validWorkflow,
+        nodes: [{ id: 'plan', type: 'skill', label: 'Plan' }],
+      }).errors,
+    ).toContain('nodes.0.skillRef: provide exactly one of skillRef or skillContent');
+
+    expect(
+      validateWorkflow({
+        ...validWorkflow,
+        nodes: [
+          {
+            id: 'plan',
+            type: 'skill',
+            label: 'Plan',
+            skillRef: 'skills/plan/SKILL.md',
+            skillContent: '# Plan\n',
+          },
+        ],
+      }).errors,
+    ).toContain('nodes.0.skillRef: provide exactly one of skillRef or skillContent');
   });
 
   it('sorts workflow nodes in executable order', () => {
