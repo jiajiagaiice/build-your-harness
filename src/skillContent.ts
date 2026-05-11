@@ -1,50 +1,88 @@
 import { SkillNode } from './schema/workflow';
 
-export function createSkillDraft(node: SkillNode): string {
-  const slug = slugify(node.label || node.id);
-  const description = node.description?.trim() || `Use this skill when the workflow reaches the ${node.label} phase.`;
+export type SkillMetadataUpdate = Pick<SkillNode, 'label' | 'description'>;
+
+export function createSkillDraft(node?: Partial<SkillNode>): string {
+  const label = node?.label?.trim() || 'My Skill';
+  const slug = slugify(label || node?.id || 'my-skill');
+  const description = node?.description?.trim() || 'Use this skill when the harness needs focused, reusable guidance.';
 
   return `---
 name: ${slug}
 description: ${description}
 ---
 
-# ${node.label}
+# ${label}
 
 ## When to use
 
-Use this skill when this harness reaches the \`${node.id}\` node.
+Use this skill when the current workflow step matches this capability.
 
 ## Instructions
 
-1. Confirm the current user goal and constraints.
-2. Apply the ${node.type} guidance for this workflow step.
-3. Keep outputs concise, actionable, and easy to verify.
-4. State completion status and any follow-up needed before moving on.
+1. Confirm the user goal and constraints.
+2. Apply the guidance for this step.
+3. Keep the output concise and verifiable.
 `;
 }
 
-export function createSkillGenerationPrompt(node: SkillNode): string {
-  return `Generate concise SKILL.md content for this AI-agent harness node.
+export function readSkillMetadataFromContent(content: string): Partial<SkillMetadataUpdate> {
+  const frontmatter = content.match(/^---\s*\n([\s\S]*?)\n---/);
+  const metadata: Partial<SkillMetadataUpdate> = {};
 
-Node id: ${node.id}
-Label: ${node.label}
-Type: ${node.type}
-Skill reference: ${node.skillRef || 'not set'}
-Description: ${node.description || 'not set'}
+  if (frontmatter) {
+    const name = readFrontmatterField(frontmatter[1], 'name');
+    const description = readFrontmatterField(frontmatter[1], 'description');
 
-Requirements:
-- Return only valid Markdown for SKILL.md.
-- Include YAML frontmatter with name and description.
-- Keep activation guidance short.
-- Put detailed background in references/ only if truly needed.
-- Include deterministic steps the agent should follow.`;
+    if (name) {
+      metadata.label = titleize(name);
+    }
+    if (description) {
+      metadata.description = description;
+    }
+  }
+
+  if (!metadata.label) {
+    const heading = content.match(/^#\s+(.+)$/m)?.[1]?.trim();
+    if (heading) {
+      metadata.label = heading;
+    }
+  }
+
+  return metadata;
+}
+
+export function readSkillMetadataFromReference(reference: string): Partial<SkillMetadataUpdate> {
+  const cleanReference = reference.trim().replace(/[?#].*$/, '').replace(/\/+$/, '');
+  if (!cleanReference) {
+    return {};
+  }
+
+  const parts = cleanReference.split('/').filter(Boolean);
+  const last = parts.at(-1)?.toLowerCase() === 'skill.md' ? parts.at(-2) : parts.at(-1);
+
+  return last ? { label: titleize(last.replace(/\.md$/i, '')) } : {};
+}
+
+function readFrontmatterField(frontmatter: string, key: string): string | undefined {
+  const match = frontmatter.match(new RegExp(`^${key}:\\s*(.+)$`, 'im'));
+  return match?.[1]?.trim().replace(/^['"]|['"]$/g, '');
+}
+
+function titleize(value: string): string {
+  return value
+    .trim()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase()) || 'My Skill';
 }
 
 function slugify(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'generated-skill';
+  return (
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'my-skill'
+  );
 }

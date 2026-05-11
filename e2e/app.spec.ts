@@ -1,24 +1,30 @@
 import { expect, test } from '@playwright/test';
 
-test('validates the default workflow and edits a newly added skill', async ({ page }) => {
+test('starts blank, validates, and edits a my-skill template', async ({ page }) => {
   await page.goto('/');
 
   await expect(page.getByRole('heading', { name: 'Build Your Harness' })).toBeVisible();
+  await expect(page.locator('.skill-node')).toHaveCount(0);
 
   await page.getByRole('button', { name: /Validate/ }).click();
   await expect(page.getByText('Workflow is valid')).toBeVisible();
 
   await expect(page.getByText('Use Superpowers')).toHaveCount(0);
-  await page.getByLabel('Search skills').fill('review');
-  await page.getByRole('button', { name: 'Add Quality Review' }).click();
+  await page.getByRole('button', { name: /My Skill/ }).click();
 
   const skillEditor = page.getByRole('complementary').filter({ has: page.getByRole('heading', { name: 'Skill Editor' }) });
-  await expect(skillEditor.getByLabel('Label')).toHaveValue('Quality Review');
+  await expect(skillEditor.getByText('Detected metadata')).toBeVisible();
+  await expect(skillEditor.locator('.inspector__metadata-card strong')).toHaveText('My Skill');
+  await expect(skillEditor.getByLabel('SKILL.md content')).toHaveValue(/name: my-skill/);
 
-  await skillEditor.getByLabel('Description').fill('Run browser automation before handoff.');
-  await expect(skillEditor.getByLabel('Description')).toHaveValue('Run browser automation before handoff.');
+  await skillEditor.getByLabel('SKILL.md content').fill(`---
+name: browser-review
+description: Run browser automation before handoff.
+---
 
-  await skillEditor.getByLabel('Write SKILL.md here').check();
-  await skillEditor.getByRole('button', { name: 'Generate draft with AI helper' }).click();
-  await expect(skillEditor.getByLabel('SKILL.md content')).toHaveValue(/# Quality Review/);
+# Browser Review
+`);
+  await expect(skillEditor.locator('.inspector__metadata-card strong')).toHaveText('Browser Review');
+  await expect(skillEditor.locator('.inspector__metadata-card p')).toHaveText('Run browser automation before handoff.');
+  await expect(skillEditor.getByText('AI assistant prompt')).toHaveCount(0);
 });

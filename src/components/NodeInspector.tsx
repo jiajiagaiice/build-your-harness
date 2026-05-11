@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { SkillNode } from '../schema/workflow';
-import { createSkillDraft, createSkillGenerationPrompt } from '../skillContent';
+import { createSkillDraft, readSkillMetadataFromContent, readSkillMetadataFromReference } from '../skillContent';
 import { useWorkflowStore } from '../store/workflowStore';
 import { useI18n } from '../i18n';
 
@@ -18,13 +18,42 @@ function getInitialSourceMode(node: SkillNode): SkillSourceMode {
 function SourceEditor({ node, updateNode }: SourceEditorProps) {
   const { t } = useI18n();
   const [sourceMode, setSourceMode] = useState<SkillSourceMode>(() => getInitialSourceMode(node));
+
   const selectSourceMode = (mode: SkillSourceMode) => {
     setSourceMode(mode);
-    updateNode(node.id, mode === 'reference' ? { skillContent: undefined } : { skillRef: undefined });
+
+    if (mode === 'reference') {
+      updateNode(node.id, { skillContent: undefined });
+      return;
+    }
+
+    const skillContent = node.skillContent ?? createSkillDraft(node);
+    updateNode(node.id, { skillRef: undefined, skillContent, ...readSkillMetadataFromContent(skillContent) });
+  };
+
+  const updateReference = (reference: string) => {
+    updateNode(node.id, {
+      skillRef: reference || undefined,
+      skillContent: undefined,
+      ...readSkillMetadataFromReference(reference),
+    });
+  };
+
+  const updateContent = (skillContent: string) => {
+    updateNode(node.id, {
+      skillRef: undefined,
+      skillContent,
+      ...readSkillMetadataFromContent(skillContent),
+    });
   };
 
   return (
     <>
+      <div className="inspector__metadata-card">
+        <span>{t('inspector.detectedMetadata')}</span>
+        <strong>{node.label}</strong>
+        {node.description ? <p>{node.description}</p> : <p>{t('inspector.noDescription')}</p>}
+      </div>
       <fieldset className="inspector__source">
         <legend>{t('inspector.skillSource')}</legend>
         <p className="inspector__help">{t('inspector.skillSourceHelp')}</p>
@@ -52,29 +81,22 @@ function SourceEditor({ node, updateNode }: SourceEditorProps) {
       {sourceMode === 'reference' ? (
         <label>
           {t('inspector.skillRef')}
-          <input
-            value={node.skillRef ?? ''}
-            placeholder={t('inspector.skillRefPlaceholder')}
-            onChange={(event) => updateNode(node.id, { skillRef: event.target.value || undefined, skillContent: undefined })}
-          />
+          <input value={node.skillRef ?? ''} placeholder={t('inspector.skillRefPlaceholder')} onChange={(event) => updateReference(event.target.value)} />
         </label>
       ) : (
         <div className="inspector__section">
           <div className="inspector__section-heading">
             <span>{t('inspector.skillContent')}</span>
-            <button
-              type="button"
-              onClick={() => updateNode(node.id, { skillRef: undefined, skillContent: createSkillDraft(node) })}
-            >
-              {t('inspector.generateWithAi')}
+            <button type="button" onClick={() => updateContent(createSkillDraft({ id: 'my-skill', label: 'My Skill' }))}>
+              {t('inspector.useTemplate')}
             </button>
           </div>
           <p className="inspector__help">{t('inspector.skillContentHelp')}</p>
           <textarea
             aria-label={t('inspector.skillContent')}
             value={node.skillContent ?? ''}
-            onChange={(event) => updateNode(node.id, { skillRef: undefined, skillContent: event.target.value })}
-            rows={12}
+            onChange={(event) => updateContent(event.target.value)}
+            rows={15}
           />
         </div>
       )}
@@ -86,7 +108,6 @@ export function NodeInspector() {
   const { t } = useI18n();
   const { workflow, selectedNodeId, updateNode } = useWorkflowStore();
   const node = workflow.nodes.find((item) => item.id === selectedNodeId);
-  const aiPrompt = useMemo(() => (node ? createSkillGenerationPrompt(node) : ''), [node]);
 
   if (!node) {
     return (
@@ -100,27 +121,7 @@ export function NodeInspector() {
   return (
     <aside className="panel inspector">
       <h2>{t('inspector.title')}</h2>
-      <label>
-        {t('inspector.label')}
-        <input value={node.label} onChange={(event) => updateNode(node.id, { label: event.target.value })} />
-      </label>
-      <label>
-        {t('inspector.description')}
-        <textarea
-          value={node.description ?? ''}
-          onChange={(event) => updateNode(node.id, { description: event.target.value })}
-          rows={4}
-        />
-      </label>
       <SourceEditor key={node.id} node={node} updateNode={updateNode} />
-      <details className="inspector__section">
-        <summary>{t('inspector.aiPrompt')}</summary>
-        <p className="inspector__help">{t('inspector.aiPromptHelp')}</p>
-        <textarea readOnly value={aiPrompt} rows={9} />
-        <button type="button" className="inspector__secondary-action" onClick={() => void navigator.clipboard.writeText(aiPrompt)}>
-          {t('inspector.copyPrompt')}
-        </button>
-      </details>
     </aside>
   );
 }

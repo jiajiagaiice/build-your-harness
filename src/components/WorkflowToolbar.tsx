@@ -1,4 +1,4 @@
-import { Download, ShieldCheck, Upload } from 'lucide-react';
+import { Box, Download, ShieldCheck, Upload } from 'lucide-react';
 import { ChangeEvent, useRef, useState } from 'react';
 import { exportSkillHarness } from '../exporters/skillHarnessExporter';
 import { useI18n, Language } from '../i18n';
@@ -39,10 +39,18 @@ export function WorkflowToolbar() {
 
   return (
     <header className="toolbar">
-      <div>
-        <h1>{t('app.title')}</h1>
-        <p>{t('app.subtitle')}</p>
+      <div className="toolbar__brand">
+        <span className="toolbar__logo"><Box size={24} /></span>
+        <div>
+          <h1>{t('app.title')}</h1>
+          <p>{t('app.subtitle')}</p>
+        </div>
       </div>
+      <nav className="toolbar__nav" aria-label="Product sections">
+        <a href="#skills">Skills</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#export">Export</a>
+      </nav>
       <div className="toolbar__actions">
         <label className="toolbar__language">
           {t('toolbar.language')}
