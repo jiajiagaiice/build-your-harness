@@ -7,6 +7,11 @@ import { useWorkflowStore } from '../store/workflowStore';
 
 type SkillSourceMode = 'reference' | 'content';
 
+type NodeInspectorProps = {
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+};
+
 type SourceEditorProps = {
   node: SkillNode;
   updateNode: (nodeId: string, patch: Partial<SkillNode>) => void;
@@ -128,7 +133,7 @@ function SourceEditor({ node, updateNode }: SourceEditorProps) {
   );
 }
 
-export function NodeInspector() {
+export function NodeInspector({ collapsed, onToggleCollapse }: NodeInspectorProps) {
   const { t } = useI18n();
   const { workflow, selectedNodeId, updateNode, setNodes, setEdges, selectNode } = useWorkflowStore();
   const node = workflow.nodes.find((item) => item.id === selectedNodeId);
@@ -143,6 +148,23 @@ export function NodeInspector() {
     selectNode(id);
   };
 
+  const openSkillSource = () => {
+    if (!node) {
+      return;
+    }
+
+    if (!node.skillContent && node.skillRef && /^https?:\/\//i.test(node.skillRef)) {
+      window.open(node.skillRef, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    const source = node.skillContent ?? `# ${node.label}\n\nSkill reference: ${node.skillRef ?? 'No SKILL.md source configured.'}\n`;
+    const blob = new Blob([source], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  };
+
   const deleteNode = () => {
     if (!node) {
       return;
@@ -155,40 +177,59 @@ export function NodeInspector() {
 
   if (!node) {
     return (
-      <aside className="panel inspector">
+      <aside className={`panel inspector ${collapsed ? 'inspector--collapsed' : ''}`} aria-expanded={!collapsed}>
         <div className="panel__heading">
           <h2>{t('inspector.emptyTitle')}</h2>
+          <button
+            type="button"
+            className="panel__collapse"
+            aria-label={collapsed ? 'Expand skill editor' : 'Collapse skill editor'}
+            onClick={onToggleCollapse}
+          >
+            {collapsed ? '⌃' : '⌄'}
+          </button>
         </div>
-        <div className="inspector__empty">
-          <Layers3 size={32} />
-          <p>{t('inspector.emptyBody')}</p>
+        <div className="inspector__content" hidden={collapsed}>
+          <div className="inspector__empty">
+            <Layers3 size={32} />
+            <p>{t('inspector.emptyBody')}</p>
+          </div>
         </div>
       </aside>
     );
   }
 
   return (
-    <aside className="panel inspector">
+    <aside className={`panel inspector ${collapsed ? 'inspector--collapsed' : ''}`} aria-expanded={!collapsed}>
       <div className="panel__heading">
         <h2>{t('inspector.title')}</h2>
-        <button type="button" className="panel__collapse" aria-label="Collapse skill editor">⌄</button>
+        <button
+          type="button"
+          className="panel__collapse"
+          aria-label={collapsed ? 'Expand skill editor' : 'Collapse skill editor'}
+          onClick={onToggleCollapse}
+        >
+          {collapsed ? '⌃' : '⌄'}
+        </button>
       </div>
-      <div className="inspector__editing">
-        <span><Target size={20} /> Editing</span>
-        <strong>{node.label}</strong>
-        <span className="inspector__ready">Ready</span>
-      </div>
-      <SourceEditor key={node.id} node={node} updateNode={updateNode} />
-      <button type="button" className="inspector__open-skill">
-        Open SKILL.md <ExternalLink size={15} />
-      </button>
-      <div className="inspector__actions">
-        <button type="button" onClick={duplicateNode}><Copy size={16} /> Duplicate</button>
-        <button type="button" className="inspector__delete" onClick={deleteNode}><Trash2 size={16} /> Delete</button>
-      </div>
-      <div className="inspector__notice">
-        <Info size={18} />
-        <span>Changes are saved automatically and reflected in the workflow.</span>
+      <div className="inspector__content" hidden={collapsed}>
+        <div className="inspector__editing">
+          <span><Target size={20} /> Editing</span>
+          <strong>{node.label}</strong>
+          <span className="inspector__ready">Ready</span>
+        </div>
+        <SourceEditor key={node.id} node={node} updateNode={updateNode} />
+        <button type="button" className="inspector__open-skill" onClick={openSkillSource}>
+          Open SKILL.md <ExternalLink size={15} />
+        </button>
+        <div className="inspector__actions">
+          <button type="button" onClick={duplicateNode}><Copy size={16} /> Duplicate</button>
+          <button type="button" className="inspector__delete" onClick={deleteNode}><Trash2 size={16} /> Delete</button>
+        </div>
+        <div className="inspector__notice">
+          <Info size={18} />
+          <span>Changes are saved automatically and reflected in the workflow.</span>
+        </div>
       </div>
     </aside>
   );
