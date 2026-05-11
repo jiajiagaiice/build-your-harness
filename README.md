@@ -21,7 +21,7 @@ Harness engineering treats the agent's environment as a product surface: prompts
 - Chinese/English UI toggle for authoring workflows bilingually.
 - Editable visual skill nodes with SKILL.md content fields and an AI-helper prompt/draft generator.
 - Workflow schema and DAG validation with Zod.
-- Local skill registry seeded with a Superpowers-inspired development workflow.
+- Local skill registry seeded with reusable, product-facing workflow skills.
 - Exporter that converts a workflow into agent-facing harness artifacts.
 - Project-local development harness under `harnesses/development-superpowers/`.
 
@@ -62,12 +62,12 @@ harnesses/             Example and project-local harness workflows
 docs/                  Design notes and schema documentation
 ```
 
-## Default development harness
+## Project development harness
 
-The project includes `development-superpowers`, a Superpowers-inspired linear workflow used as the default harness for developing this repository:
+The project includes `development-superpowers`, a Superpowers-inspired linear workflow used only as the development harness for this repository:
 
 ```text
 using-superpowers → brainstorming → writing-plans → executing-plans → test-driven-development → requesting-code-review → verification-before-completion
 ```
 
-See `harnesses/development-superpowers/workflow.json` for the graph and `skills/development-superpowers/` for the agent-facing skill instructions.
+The app UI uses a separate product-facing starter workflow and reusable skill catalog. See `harnesses/development-superpowers/workflow.json` for the development graph and `skills/development-superpowers/` for repository-maintenance instructions.

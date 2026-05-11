@@ -103,7 +103,7 @@ function toReactFlowNodes(nodes: SkillNode[]): Node[] {
   return nodes.map((node, index) => ({
     id: node.id,
     type: 'skillNode',
-    position: { x: 80 + index * 240, y: 120 + (index % 2) * 90 },
+    position: { x: 80 + index * 170, y: 170 + (index % 2) * 80 },
     data: node,
   }));
 }

@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useI18n } from '../i18n';
-import { developmentSkills, searchSkills } from '../registry/skills';
+import { reusableSkills, searchSkills } from '../registry/skills';
 import { useWorkflowStore } from '../store/workflowStore';
 
 export function SkillPalette() {
   const { t } = useI18n();
   const [query, setQuery] = useState('');
-  const skills = useMemo(() => searchSkills(query, developmentSkills), [query]);
+  const skills = useMemo(() => searchSkills(query, reusableSkills), [query]);
   const { workflow, setNodes, selectNode } = useWorkflowStore();
 
   return (
