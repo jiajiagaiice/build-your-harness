@@ -114,7 +114,7 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('zh');
+  const [language, setLanguage] = useState<Language>('en');
 
   const value = useMemo<I18nContextValue>(
     () => ({
