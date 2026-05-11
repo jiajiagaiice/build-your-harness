@@ -21,20 +21,17 @@ type TranslationKey =
   | 'inspector.title'
   | 'inspector.emptyTitle'
   | 'inspector.emptyBody'
-  | 'inspector.label'
   | 'inspector.skillSource'
   | 'inspector.skillSourceHelp'
   | 'inspector.skillRefMode'
   | 'inspector.skillContentMode'
   | 'inspector.skillRef'
   | 'inspector.skillRefPlaceholder'
-  | 'inspector.description'
   | 'inspector.skillContent'
   | 'inspector.skillContentHelp'
-  | 'inspector.generateWithAi'
-  | 'inspector.aiPrompt'
-  | 'inspector.aiPromptHelp'
-  | 'inspector.copyPrompt';
+  | 'inspector.useTemplate'
+  | 'inspector.detectedMetadata'
+  | 'inspector.noDescription';
 
 type I18nContextValue = {
   language: Language;
@@ -60,21 +57,18 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
     'canvas.editHint': 'Click a node to edit its metadata and skill source.',
     'inspector.title': 'Skill Editor',
     'inspector.emptyTitle': 'Skill Editor',
-    'inspector.emptyBody': 'Select a visual skill node to edit its label, description, and skill source.',
-    'inspector.label': 'Label',
+    'inspector.emptyBody': 'Select a skill node to edit its source. The name and description are read from SKILL.md or the reference link automatically.',
     'inspector.skillSource': 'Skill source',
-    'inspector.skillSourceHelp': 'Choose either a reference link or inline SKILL.md content. These two sources are mutually exclusive.',
+    'inspector.skillSourceHelp': 'Choose either a reference link or inline SKILL.md content. Name and description are detected automatically.',
     'inspector.skillRefMode': 'Reference link',
     'inspector.skillContentMode': 'Write SKILL.md here',
     'inspector.skillRef': 'Skill reference link',
     'inspector.skillRefPlaceholder': 'https://github.com/org/repo/tree/main/skills/some-skill',
-    'inspector.description': 'Description',
     'inspector.skillContent': 'SKILL.md content',
-    'inspector.skillContentHelp': 'Inline content is exported as a generated SKILL.md artifact and clears the reference link.',
-    'inspector.generateWithAi': 'Generate draft with AI helper',
-    'inspector.aiPrompt': 'AI assistant prompt',
-    'inspector.aiPromptHelp': 'Copy this prompt into your AI assistant, then paste the generated skill content back into the editor.',
-    'inspector.copyPrompt': 'Copy prompt',
+    'inspector.skillContentHelp': 'Start from the my-skill template or paste SKILL.md content. Frontmatter is used for the node name and description.',
+    'inspector.useTemplate': 'Use my-skill template',
+    'inspector.detectedMetadata': 'Detected metadata',
+    'inspector.noDescription': 'No description detected yet.',
   },
   zh: {
     'app.title': '构建你的 Harness',
@@ -93,21 +87,18 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
     'canvas.editHint': '点击节点即可编辑元数据和 skill 来源。',
     'inspector.title': 'Skill 编辑器',
     'inspector.emptyTitle': 'Skill 编辑器',
-    'inspector.emptyBody': '请选择一个可视化 skill 节点，以编辑名称、描述和 skill 来源。',
-    'inspector.label': '名称',
+    'inspector.emptyBody': '请选择一个 skill 节点编辑来源。名称和描述会从 SKILL.md 或引用链接自动读取。',
     'inspector.skillSource': 'Skill 来源',
-    'inspector.skillSourceHelp': '选择一种来源：填写引用链接，或直接编写 SKILL.md 内容；两者互斥。',
+    'inspector.skillSourceHelp': '选择引用链接或直接编写 SKILL.md；名称和描述会自动识别。',
     'inspector.skillRefMode': '引用链接',
     'inspector.skillContentMode': '直接编写 SKILL.md',
     'inspector.skillRef': 'Skill 引用链接',
     'inspector.skillRefPlaceholder': 'https://github.com/org/repo/tree/main/skills/some-skill',
-    'inspector.description': '描述',
     'inspector.skillContent': 'SKILL.md 内容',
-    'inspector.skillContentHelp': '直接编写的内容会导出为生成的 SKILL.md 产物，并清空引用链接。',
-    'inspector.generateWithAi': '用 AI 助手生成草稿',
-    'inspector.aiPrompt': 'AI 助手提示词',
-    'inspector.aiPromptHelp': '复制这段提示词到你的 AI 助手，再把生成的 skill 内容粘贴回编辑器。',
-    'inspector.copyPrompt': '复制提示词',
+    'inspector.skillContentHelp': '从 my-skill 模版开始，或粘贴 SKILL.md 内容。节点名称和描述会读取 frontmatter。',
+    'inspector.useTemplate': '使用 my-skill 模版',
+    'inspector.detectedMetadata': '自动识别的元数据',
+    'inspector.noDescription': '尚未识别到描述。',
   },
 };
 

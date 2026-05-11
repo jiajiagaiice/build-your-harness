@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createSkillDraft, createSkillGenerationPrompt } from './skillContent';
+import { createSkillDraft, readSkillMetadataFromContent, readSkillMetadataFromReference } from './skillContent';
 
 const node = {
   id: 'code-review',
@@ -17,11 +17,32 @@ describe('skill content helpers', () => {
     expect(draft).toContain('Review correctness before handoff.');
   });
 
-  it('creates an AI prompt that includes editable node context', () => {
-    const prompt = createSkillGenerationPrompt(node);
+  it('creates a concise my-skill template when no node metadata is provided', () => {
+    const draft = createSkillDraft();
 
-    expect(prompt).toContain('Node id: code-review');
-    expect(prompt).toContain('Type: verification');
-    expect(prompt).toContain('Return only valid Markdown for SKILL.md');
+    expect(draft).toContain('name: my-skill');
+    expect(draft).toContain('# My Skill');
+  });
+
+  it('reads node metadata from SKILL.md frontmatter', () => {
+    expect(
+      readSkillMetadataFromContent(`---
+name: release-handoff
+description: Summarize outcomes before transfer.
+---
+
+# Release Handoff
+`),
+    ).toEqual({ label: 'Release Handoff', description: 'Summarize outcomes before transfer.' });
+  });
+
+  it('falls back to the first heading when frontmatter has no name', () => {
+    expect(readSkillMetadataFromContent('# Browser Review\n\nRun e2e checks.')).toEqual({ label: 'Browser Review' });
+  });
+
+  it('reads node metadata from a skill reference path', () => {
+    expect(readSkillMetadataFromReference('https://github.com/acme/harness/tree/main/skills/code-review/SKILL.md')).toEqual({
+      label: 'Code Review',
+    });
   });
 });

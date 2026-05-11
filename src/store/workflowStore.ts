@@ -5,51 +5,10 @@ export const initialWorkflow: HarnessWorkflow = {
   id: 'starter-agent-harness',
   name: 'Starter Agent Harness',
   version: '0.1.0',
-  description: 'A reusable starter workflow for guiding an AI agent from discovery through delivery.',
-  entryNodeId: 'intake-discovery',
-  nodes: [
-    {
-      id: 'intake-discovery',
-      type: 'skill',
-      label: 'Intake Discovery',
-      skillRef: 'skills/catalog/intake-discovery/SKILL.md',
-      description: 'Capture the user goal, context, constraints, and acceptance criteria before planning.',
-    },
-    {
-      id: 'solution-design',
-      type: 'skill',
-      label: 'Solution Design',
-      skillRef: 'skills/catalog/solution-design/SKILL.md',
-      description: 'Compare viable approaches and select a plan that fits the workflow constraints.',
-    },
-    {
-      id: 'implementation',
-      type: 'skill',
-      label: 'Implementation',
-      skillRef: 'skills/catalog/implementation/SKILL.md',
-      description: 'Make focused changes while keeping progress, assumptions, and risks visible.',
-    },
-    {
-      id: 'quality-review',
-      type: 'verification',
-      label: 'Quality Review',
-      skillRef: 'skills/catalog/quality-review/SKILL.md',
-      description: 'Review correctness, maintainability, edge cases, and user-visible behavior before handoff.',
-    },
-    {
-      id: 'release-handoff',
-      type: 'verification',
-      label: 'Release Handoff',
-      skillRef: 'skills/catalog/release-handoff/SKILL.md',
-      description: 'Summarize outcomes, checks, limitations, and follow-up actions for the next operator.',
-    },
-  ],
-  edges: [
-    { id: 'intake-discovery-solution-design', source: 'intake-discovery', target: 'solution-design' },
-    { id: 'solution-design-implementation', source: 'solution-design', target: 'implementation' },
-    { id: 'implementation-quality-review', source: 'implementation', target: 'quality-review' },
-    { id: 'quality-review-release-handoff', source: 'quality-review', target: 'release-handoff' },
-  ],
+  description: 'Start from a blank canvas and add only the skills this harness needs.',
+  entryNodeId: '',
+  nodes: [],
+  edges: [],
 };
 
 type WorkflowState = {
@@ -62,11 +21,26 @@ type WorkflowState = {
   updateNode: (nodeId: string, patch: Partial<SkillNode>) => void;
 };
 
+function getEntryNodeId(nodes: SkillNode[], currentEntryNodeId: string) {
+  if (nodes.length === 0) {
+    return '';
+  }
+
+  return nodes.some((node) => node.id === currentEntryNodeId) ? currentEntryNodeId : nodes[0].id;
+}
+
 export const useWorkflowStore = create<WorkflowState>((set) => ({
   workflow: initialWorkflow,
   selectedNodeId: undefined,
   setWorkflow: (workflow) => set({ workflow, selectedNodeId: undefined }),
-  setNodes: (nodes) => set((state) => ({ workflow: { ...state.workflow, nodes } })),
+  setNodes: (nodes) =>
+    set((state) => ({
+      workflow: {
+        ...state.workflow,
+        nodes,
+        entryNodeId: getEntryNodeId(nodes, state.workflow.entryNodeId),
+      },
+    })),
   setEdges: (edges) => set((state) => ({ workflow: { ...state.workflow, edges } })),
   selectNode: (nodeId) => set({ selectedNodeId: nodeId }),
   updateNode: (nodeId, patch) =>

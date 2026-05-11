@@ -46,8 +46,8 @@ export const HarnessWorkflowSchema = z.object({
   name: z.string().min(1),
   version: z.string().min(1),
   description: z.string().optional(),
-  entryNodeId: z.string().min(1),
-  nodes: z.array(SkillNodeSchema).min(1),
+  entryNodeId: z.string(),
+  nodes: z.array(SkillNodeSchema),
   edges: z.array(SkillEdgeSchema),
 });
 
@@ -78,7 +78,11 @@ export function validateWorkflowGraph(workflow: HarnessWorkflow): string[] {
   const errors: string[] = [];
   const nodeIds = new Set(workflow.nodes.map((node) => node.id));
 
-  if (!nodeIds.has(workflow.entryNodeId)) {
+  if (workflow.nodes.length === 0) {
+    if (workflow.entryNodeId) {
+      errors.push('entryNodeId must be empty when the workflow has no nodes');
+    }
+  } else if (!nodeIds.has(workflow.entryNodeId)) {
     errors.push(`entryNodeId "${workflow.entryNodeId}" does not match any node`);
   }
 
