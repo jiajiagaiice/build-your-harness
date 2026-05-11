@@ -38,7 +38,14 @@ Useful checks:
 npm run build
 npm test
 npm run lint
+npm run test:e2e
 ```
+
+## UI automation
+
+Playwright is included as a development dependency for browser-level validation. Run `npm run test:e2e` to start the Vite dev server automatically and exercise the app in a bundled Chromium binary. Use this after perceptible UI changes so development can close the loop with real browser checks.
+
+The default Playwright config uses `@sparticuz/chromium` so e2e tests do not depend on a separate `npx playwright install chromium` download. If a local or CI environment needs to force a specific browser, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/path/to/chromium` before running `npm run test:e2e`.
 
 ## Repository layout
 
