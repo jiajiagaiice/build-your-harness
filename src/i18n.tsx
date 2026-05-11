@@ -42,7 +42,7 @@ type I18nContextValue = {
 const dictionaries: Record<Language, Record<TranslationKey, string>> = {
   en: {
     'app.title': 'Build Your Harness',
-    'app.subtitle': 'Compose skill nodes into directed agent workflows.',
+    'app.subtitle': 'Design reliable AI agent workflows from reusable skill nodes.',
     'toolbar.validate': 'Validate',
     'toolbar.import': 'Import JSON',
     'toolbar.export': 'Export Harness',
@@ -54,7 +54,7 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
     'palette.title': 'Skill Palette',
     'palette.search': 'Search skills',
     'palette.addSkill': 'Add {name}',
-    'canvas.editHint': 'Click a node to edit its metadata and skill source.',
+    'canvas.editHint': 'Drag skills onto the canvas to compose an agent workflow.',
     'inspector.title': 'Skill Editor',
     'inspector.emptyTitle': 'Skill Editor',
     'inspector.emptyBody': 'Select a skill node to edit its source. The name and description are read from SKILL.md or the reference link automatically.',
@@ -72,7 +72,7 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
   },
   zh: {
     'app.title': '构建你的 Harness',
-    'app.subtitle': '将 skill 节点编排成有向的智能体工作流。',
+    'app.subtitle': '用可复用 skill 节点设计可靠的 AI 智能体工作流。',
     'toolbar.validate': '校验',
     'toolbar.import': '导入 JSON',
     'toolbar.export': '导出 Harness',
@@ -84,7 +84,7 @@ const dictionaries: Record<Language, Record<TranslationKey, string>> = {
     'palette.title': 'Skill 面板',
     'palette.search': '搜索 skill',
     'palette.addSkill': '添加 {name}',
-    'canvas.editHint': '点击节点即可编辑元数据和 skill 来源。',
+    'canvas.editHint': '将 skill 拖到画布上，编排智能体工作流。',
     'inspector.title': 'Skill 编辑器',
     'inspector.emptyTitle': 'Skill 编辑器',
     'inspector.emptyBody': '请选择一个 skill 节点编辑来源。名称和描述会从 SKILL.md 或引用链接自动读取。',

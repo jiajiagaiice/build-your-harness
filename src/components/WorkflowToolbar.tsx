@@ -1,4 +1,4 @@
-import { Box, Download, ShieldCheck, Upload } from 'lucide-react';
+import { Box, ChevronDown, Download, Globe2, ShieldCheck, Upload } from 'lucide-react';
 import { ChangeEvent, useRef, useState } from 'react';
 import { exportSkillHarness } from '../exporters/skillHarnessExporter';
 import { useI18n, Language } from '../i18n';
@@ -40,7 +40,7 @@ export function WorkflowToolbar() {
   return (
     <header className="toolbar">
       <div className="toolbar__brand">
-        <span className="toolbar__logo"><Box size={24} /></span>
+        <span className="toolbar__logo"><Box size={26} strokeWidth={2.2} /></span>
         <div>
           <h1>{t('app.title')}</h1>
           <p>{t('app.subtitle')}</p>
@@ -48,28 +48,32 @@ export function WorkflowToolbar() {
       </div>
       <nav className="toolbar__nav" aria-label="Product sections">
         <a href="#skills">Skills</a>
-        <a href="#workflow">Workflow</a>
+        <a className="toolbar__nav-link--active" href="#workflow">Workflow</a>
         <a href="#export">Export</a>
       </nav>
       <div className="toolbar__actions">
-        <label className="toolbar__language">
-          {t('toolbar.language')}
+        <label className="toolbar__language" aria-label={t('toolbar.language')}>
+          <Globe2 size={16} />
           <select value={language} onChange={(event) => setLanguage(event.target.value as Language)}>
-            <option value="zh">中文</option>
             <option value="en">English</option>
+            <option value="zh">中文</option>
           </select>
+          <ChevronDown className="toolbar__language-chevron" size={14} aria-hidden="true" />
         </label>
-        <button type="button" onClick={() => setMessage(validation.valid ? t('toolbar.status.valid') : validation.errors.join('; '))}>
+        <button className="toolbar__button toolbar__button--ghost" type="button" onClick={() => setMessage(validation.valid ? t('toolbar.status.valid') : validation.errors.join('; '))}>
           <ShieldCheck size={16} /> {t('toolbar.validate')}
         </button>
-        <button type="button" onClick={() => inputRef.current?.click()}>
+        <button className="toolbar__button toolbar__button--ghost" type="button" onClick={() => inputRef.current?.click()}>
           <Upload size={16} /> {t('toolbar.import')}
         </button>
-        <button type="button" onClick={exportWorkflow} disabled={!validation.valid}>
+        <button className="toolbar__button toolbar__button--primary" type="button" onClick={exportWorkflow} disabled={!validation.valid}>
           <Download size={16} /> {t('toolbar.export')}
         </button>
         <input ref={inputRef} hidden type="file" accept="application/json" onChange={importWorkflow} />
-        <span className={validation.valid ? 'status status--ok' : 'status status--error'}>{message}</span>
+        <span className={validation.valid ? 'status status--ok' : 'status status--error'}>
+          <span className="status__dot" />
+          {message}
+        </span>
       </div>
     </header>
   );

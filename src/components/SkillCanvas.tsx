@@ -8,11 +8,14 @@ import {
   MiniMap,
   Node,
   NodeTypes,
+  Panel,
   ReactFlow,
   addEdge,
   useEdgesState,
   useNodesState,
+  useReactFlow,
 } from '@xyflow/react';
+import { Maximize2, Rows3 } from 'lucide-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useI18n } from '../i18n';
 import { SkillNode } from '../schema/workflow';
@@ -26,7 +29,23 @@ const nodeTypes: NodeTypes = {
 const defaultEdgeOptions = {
   animated: true,
   markerEnd: { type: MarkerType.ArrowClosed },
+  style: { stroke: '#5b32e6', strokeWidth: 3 },
 };
+
+function CanvasActions({ onAutoLayout }: { onAutoLayout: () => void }) {
+  const { fitView } = useReactFlow();
+
+  return (
+    <Panel position="top-right" className="canvas-actions">
+      <button type="button" onClick={onAutoLayout}>
+        <Rows3 size={16} /> Auto Layout
+      </button>
+      <button type="button" onClick={() => fitView({ padding: 0.18, duration: 360, maxZoom: 1 })}>
+        <Maximize2 size={16} /> Fit View
+      </button>
+    </Panel>
+  );
+}
 
 export function SkillCanvas() {
   const { t } = useI18n();
@@ -74,6 +93,15 @@ export function SkillCanvas() {
     [setWorkflowEdges, workflow.edges],
   );
 
+  const autoLayout = useCallback(() => {
+    setNodes((currentNodes) =>
+      currentNodes.map((node, index) => ({
+        ...node,
+        position: { x: -260 + index * 180, y: 250 },
+      })),
+    );
+  }, [setNodes]);
+
   return (
     <>
       <div className="canvas-hint">{t('canvas.editHint')}</div>
@@ -83,6 +111,8 @@ export function SkillCanvas() {
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
+        fitViewOptions={{ padding: 0.18, maxZoom: 1 }}
+        maxZoom={1}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
@@ -91,9 +121,10 @@ export function SkillCanvas() {
         onNodesDelete={onNodesDelete}
         onEdgesDelete={onEdgesDelete}
       >
-        <Background />
-        <MiniMap zoomable pannable />
-        <Controls />
+        <Background color="#d7d2ff" gap={18} size={1.2} />
+        <MiniMap zoomable pannable maskColor="rgba(248, 250, 255, 0.68)" />
+        <Controls showInteractive={false} />
+        <CanvasActions onAutoLayout={autoLayout} />
       </ReactFlow>
     </>
   );
@@ -103,8 +134,8 @@ function toReactFlowNodes(nodes: SkillNode[]): Node[] {
   return nodes.map((node, index) => ({
     id: node.id,
     type: 'skillNode',
-    position: { x: 80 + index * 170, y: 170 + (index % 2) * 80 },
-    data: node,
+    position: { x: -260 + index * 180, y: 250 },
+    data: { ...node, order: index + 1 },
   }));
 }
 

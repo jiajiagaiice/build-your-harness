@@ -1,8 +1,9 @@
+import { Copy, ExternalLink, Info, Layers3, Trash2, Target } from 'lucide-react';
 import { useState } from 'react';
+import { useI18n } from '../i18n';
 import { SkillNode } from '../schema/workflow';
 import { createSkillDraft, readSkillMetadataFromContent, readSkillMetadataFromReference } from '../skillContent';
 import { useWorkflowStore } from '../store/workflowStore';
-import { useI18n } from '../i18n';
 
 type SkillSourceMode = 'reference' | 'content';
 
@@ -54,6 +55,18 @@ function SourceEditor({ node, updateNode }: SourceEditorProps) {
         <strong>{node.label}</strong>
         {node.description ? <p>{node.description}</p> : <p>{t('inspector.noDescription')}</p>}
       </div>
+      <label>
+        Name
+        <input value={node.label} onChange={(event) => updateNode(node.id, { label: event.target.value })} />
+      </label>
+      <label>
+        Description
+        <textarea
+          value={node.description ?? ''}
+          onChange={(event) => updateNode(node.id, { description: event.target.value })}
+          rows={4}
+        />
+      </label>
       <fieldset className="inspector__source">
         <legend>{t('inspector.skillSource')}</legend>
         <p className="inspector__help">{t('inspector.skillSourceHelp')}</p>
@@ -81,7 +94,10 @@ function SourceEditor({ node, updateNode }: SourceEditorProps) {
       {sourceMode === 'reference' ? (
         <label>
           {t('inspector.skillRef')}
-          <input value={node.skillRef ?? ''} placeholder={t('inspector.skillRefPlaceholder')} onChange={(event) => updateReference(event.target.value)} />
+          <span className="inspector__source-row">
+            <input value={node.skillRef ?? ''} placeholder={t('inspector.skillRefPlaceholder')} onChange={(event) => updateReference(event.target.value)} />
+            <Copy size={17} aria-hidden="true" />
+          </span>
         </label>
       ) : (
         <div className="inspector__section">
@@ -100,28 +116,80 @@ function SourceEditor({ node, updateNode }: SourceEditorProps) {
           />
         </div>
       )}
+      <div className="inspector__chips">
+        <span>user_request ×</span>
+        <span>repo_context ×</span>
+      </div>
+      <div className="inspector__chips inspector__chips--outputs">
+        <span>spec.md ×</span>
+        <span>acceptance_criteria ×</span>
+      </div>
     </>
   );
 }
 
 export function NodeInspector() {
   const { t } = useI18n();
-  const { workflow, selectedNodeId, updateNode } = useWorkflowStore();
+  const { workflow, selectedNodeId, updateNode, setNodes, setEdges, selectNode } = useWorkflowStore();
   const node = workflow.nodes.find((item) => item.id === selectedNodeId);
+
+  const duplicateNode = () => {
+    if (!node) {
+      return;
+    }
+
+    const id = `${node.id}-copy-${workflow.nodes.length + 1}`;
+    setNodes([...workflow.nodes, { ...node, id, label: `${node.label} Copy` }]);
+    selectNode(id);
+  };
+
+  const deleteNode = () => {
+    if (!node) {
+      return;
+    }
+
+    setNodes(workflow.nodes.filter((item) => item.id !== node.id));
+    setEdges(workflow.edges.filter((edge) => edge.source !== node.id && edge.target !== node.id));
+    selectNode(undefined);
+  };
 
   if (!node) {
     return (
       <aside className="panel inspector">
-        <h2>{t('inspector.emptyTitle')}</h2>
-        <p>{t('inspector.emptyBody')}</p>
+        <div className="panel__heading">
+          <h2>{t('inspector.emptyTitle')}</h2>
+        </div>
+        <div className="inspector__empty">
+          <Layers3 size={32} />
+          <p>{t('inspector.emptyBody')}</p>
+        </div>
       </aside>
     );
   }
 
   return (
     <aside className="panel inspector">
-      <h2>{t('inspector.title')}</h2>
+      <div className="panel__heading">
+        <h2>{t('inspector.title')}</h2>
+        <button type="button" className="panel__collapse" aria-label="Collapse skill editor">⌄</button>
+      </div>
+      <div className="inspector__editing">
+        <span><Target size={20} /> Editing</span>
+        <strong>{node.label}</strong>
+        <span className="inspector__ready">Ready</span>
+      </div>
       <SourceEditor key={node.id} node={node} updateNode={updateNode} />
+      <button type="button" className="inspector__open-skill">
+        Open SKILL.md <ExternalLink size={15} />
+      </button>
+      <div className="inspector__actions">
+        <button type="button" onClick={duplicateNode}><Copy size={16} /> Duplicate</button>
+        <button type="button" className="inspector__delete" onClick={deleteNode}><Trash2 size={16} /> Delete</button>
+      </div>
+      <div className="inspector__notice">
+        <Info size={18} />
+        <span>Changes are saved automatically and reflected in the workflow.</span>
+      </div>
     </aside>
   );
 }
